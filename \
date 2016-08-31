@@ -1,0 +1,40 @@
+import numpy as np
+from scipy.io.wavfile import write
+
+class Sound:
+	Rate=44100#fs
+	
+	frequency=440#Hz
+	frequencyy=440#Hz
+	
+	MAX=32767#max value of an int16 number
+	
+	length=2 #s
+	
+	Amplitude=1#values from 0 to 1
+	
+	def __init__(self,rate=Rate,frequency1=frequency,frequency2=frequencyy,duration=length*1000,amplitude=Amplitude):
+		self.rate=rate
+		self.frequency1=frequency1
+		self.frequency2=frequency2
+		self.duration=duration
+		self.amplitude=amplitude
+		arr=np.linspace(0,self.frequency1*self.duration*2*np.pi/1000,self.rate*self.duration)
+		arr1=np.linspace(0,self.frequency2*self.duration*2*np.pi/1000,self.rate*self.duration)
+		arr=np.append(arr1,arr).reshape(2,-1).T
+		self.sound=np.int16(np.sin(arr)*MAX*amplitude)
+	def __add__(self,oldsound):
+		self.sound=np.append(oldsound,self.sound,axis=0)
+	def write(self,path,rrate=self.rate):
+		write(path,rrate,self.sound)
+		
+arr=np.linspace(0,frequency*length*2*np.pi,rate*length)
+arr1=np.linspace(0,frequency1*length*2*np.pi,rate*length)
+
+arr=np.append(arr1,arr).reshape(2,-1).T
+
+rawsound=np.sin(arr)*MAX*amplitude
+
+sound=np.int16(rawsound)
+
+write('test.wav',rate,sound)
